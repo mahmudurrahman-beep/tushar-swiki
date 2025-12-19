@@ -1,6 +1,5 @@
-Django>=4.2,<5.0
-gunicorn>=20.1,<21.0
-markdown2>=2.4,<3.0
-psycopg2-binary>=2.9,<3.0
-whitenoise>=6.0,<7.0
-dj-database-url>=1.0,<2.0
+Django==4.2.0
+gunicorn==20.1.0
+dj-database-url==1.2.0
+whitenoise==6.4.0
+psycopg2-binary==2.9.6  # For PostgreSQL on Render
