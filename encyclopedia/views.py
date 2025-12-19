@@ -74,12 +74,12 @@ def logout_view(request):
 # ============ WIKI VIEWS ============
 
 def index(request):
-    """Home page showing ALL entries from database"""
-    entries = Entry.objects.all().order_by('title')
-    entry_titles = [entry.title for entry in entries]
+    """Home page showing UNIQUE entry titles"""
+    # Get all distinct titles, ordered alphabetically
+    titles = Entry.objects.values_list('title', flat=True).distinct().order_by('title')
     
     return render(request, 'encyclopedia/index.html', {
-        'entries': entry_titles,
+        'entries': list(titles),  # Convert QuerySet to list
         'user': request.user
     })
 
@@ -121,9 +121,11 @@ def entry(request, title):
     })
 
 def search(request):
-    """Search entries (public access)"""
+    """Search UNIQUE entries"""
     query = request.GET.get('q', '').strip()
-    entries = [entry.title for entry in Entry.objects.all()]
+    
+    # Get unique titles for search
+    all_titles = Entry.objects.values_list('title', flat=True).distinct()
     
     if not query:
         return render(request, 'encyclopedia/search.html', {
@@ -132,9 +134,9 @@ def search(request):
             'user': request.user
         })
     
-    # Case-insensitive search
+    # Case-insensitive search on unique titles
     query_lower = query.lower()
-    results = [e for e in entries if query_lower in e.lower()]
+    results = [title for title in all_titles if query_lower in title.lower()]
     
     return render(request, 'encyclopedia/search.html', {
         'query': query,
@@ -238,14 +240,15 @@ def history(request, title):
     })
 
 def random_page(request):
-    """Redirect to random entry (public access)"""
-    entries = [entry.title for entry in Entry.objects.all()]
+    """Redirect to random UNIQUE entry"""
+    # Get unique titles
+    titles = list(Entry.objects.values_list('title', flat=True).distinct())
     
-    if not entries:
+    if not titles:
         return render(request, 'encyclopedia/error.html', {
             'message': "No entries available.",
             'user': request.user
         })
     
-    title = random.choice(entries)
+    title = random.choice(titles)
     return redirect('entry', title=title)
