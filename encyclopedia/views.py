@@ -10,65 +10,10 @@ import markdown2
 import random
 import re
 
-# ============ AUTHENTICATION VIEWS ============
-
-def register_view(request):
-    """User registration"""
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
-        confirm = request.POST.get('confirm_password', '').strip()
-        email = request.POST.get('email', '').strip()
-        
-        if not username or not password:
-            messages.error(request, "Username and password are required")
-        elif password != confirm:
-            messages.error(request, "Passwords do not match")
-        elif User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists")
-        else:
-            user = User.objects.create_user(
-                username=username, 
-                password=password, 
-                email=email if email else None
-            )
-            login(request, user)
-            messages.success(request, f"Welcome, {username}! You can now create and edit pages.")
-            return redirect('index')
-    
-    return render(request, 'encyclopedia/register.html')
-
-def login_view(request):
-    """User login"""
-    if request.user.is_authenticated:
-        return redirect('index')
-    
-    if request.method == 'POST':
-        username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
-        
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, f"Welcome back, {username}! You can now edit pages.")
-            return redirect('index')
-        else:
-            messages.error(request, "Invalid username or password")
-    
-    return render(request, 'encyclopedia/login.html')
-
-def logout_view(request):
-    """User logout"""
-    if request.user.is_authenticated:
-        logout(request)
-        messages.info(request, "You have been logged out.")
-    return redirect('index')
-
 # ============ WIKI VIEWS ============
 
 def index(request):
     """Home page showing ALL entries from database"""
-    # Get entries from database (not from Markdown files)
     entries = Entry.objects.all().order_by('title')
     entry_titles = [entry.title for entry in entries]
     
@@ -101,38 +46,69 @@ def entry(request, title):
     # Remove any remaining empty H1 at the beginning
     content_html = re.sub(r'^\s*<h1[^>]*>.*?</h1>\s*', '', content_html)
     
+    # Get edit history for this page
+    edit_history = Entry.objects.filter(title=title).order_by('-created_at')[:5]
+    
     return render(request, 'encyclopedia/entry.html', {
         'title': entry_obj.title,
         'content': content_html,
-        'entry_user': entry_obj.user,
+        'entry_obj': entry_obj,
+        'entry_user': entry_obj.user,  # Original creator
+        'edit_history': edit_history,
+        'total_edits': Entry.objects.filter(title=title).count(),
         'user': request.user
     })
 
-def search(request):
-    """Search entries (public access)"""
-    query = request.GET.get('q', '').strip()
-    entries = Entry.objects.list_entries()  # All entries for searching
+@login_required
+def edit_page(request, title):
+    """Edit ANY existing page (any authenticated user can edit)"""
+    # Get the most recent version
+    latest_entry = Entry.objects.filter(title=title).order_by('-created_at').first()
     
-    if not query:
-        return render(request, 'encyclopedia/search.html', {
-            'query': query,
-            'results': [],
-            'user': request.user
-        })
+    if latest_entry is None:
+        # Page doesn't exist yet, redirect to create
+        messages.info(request, f"Page '{title}' doesn't exist yet. Create it now!")
+        return redirect('new_page')
     
-    # Case-insensitive search
-    query_lower = query.lower()
-    results = [e for e in entries if query_lower in e.lower()]
+    if request.method == 'POST':
+        content = request.POST.get('content', '').strip()
+        
+        if not content:
+            messages.error(request, "Content cannot be empty")
+            return render(request, 'encyclopedia/edit.html', {
+                'title': title,
+                'content': latest_entry.content if latest_entry else "",
+                'user': request.user
+            })
+        
+        # Create NEW version with current user as editor
+        new_entry = Entry.objects.create(
+            title=title,
+            content=content,
+            user=request.user  # Current editor
+        )
+        
+        # Track who edited what (optional)
+        if latest_entry and latest_entry.user != request.user:
+            messages.info(request, 
+                f"You've edited '{title}', originally created by {latest_entry.user.username}."
+            )
+        else:
+            messages.success(request, f"Page '{title}' updated successfully!")
+        
+        return redirect('entry', title=title)
     
-    return render(request, 'encyclopedia/search.html', {
-        'query': query,
-        'results': results,
+    # Pre-fill with latest content
+    return render(request, 'encyclopedia/edit.html', {
+        'title': title,
+        'content': latest_entry.content if latest_entry else "",
+        'original_author': latest_entry.user if latest_entry else None,
         'user': request.user
     })
 
 @login_required
 def new_page(request):
-    """Create new page (login required)"""
+    """Create new page (any authenticated user)"""
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
         content = request.POST.get('content', '').strip()
@@ -145,70 +121,35 @@ def new_page(request):
                 'user': request.user
             })
         
-        # Check if user already has an entry with this title
-        existing = Entry.objects.filter(user=request.user, title=title).first()
+        # Check if page already exists
+        existing = Entry.objects.filter(title=title).first()
         if existing is not None:
-            messages.error(request, f"You already have an entry titled '{title}'")
-            return render(request, 'encyclopedia/new.html', {
-                'title': title,
-                'content': content,
-                'user': request.user
-            })
+            messages.info(request, 
+                f"Page '{title}' already exists. You can edit the existing page."
+            )
+            return redirect('edit_page', title=title)
         
-        # Save the entry
-        Entry.objects.create(user=request.user, title=title, content=content)
-        messages.success(request, f"Page '{title}' created successfully!")
+        # Create the first version
+        Entry.objects.create(
+            user=request.user, 
+            title=title, 
+            content=content
+        )
+        messages.success(request, f"New page '{title}' created successfully!")
         return redirect('entry', title=title)
     
     return render(request, 'encyclopedia/new.html', {'user': request.user})
 
-@login_required
-def edit_page(request, title):
-    """Edit existing page (login required - only owner can edit)"""
-    # Get the user's specific entry
-    entry_obj = Entry.objects.filter(user=request.user, title=title).first()
+def history(request, title):
+    """Show edit history of a page"""
+    entries = Entry.objects.filter(title=title).order_by('-created_at')
     
-    if entry_obj is None:
-        # Check if there's any entry with this title
-        any_entry = Entry.objects.filter(title=title).first()
-        if any_entry:
-            messages.error(request, f"You don't have permission to edit '{title}'. You can create your own version.")
-            return redirect('new_page')
-        else:
-            messages.error(request, f"The page '{title}' doesn't exist.")
-            return redirect('new_page')
+    if not entries.exists():
+        messages.error(request, f"No history found for '{title}'")
+        return redirect('index')
     
-    if request.method == 'POST':
-        content = request.POST.get('content', '').strip()
-        
-        if not content:
-            messages.error(request, "Content cannot be empty")
-            return render(request, 'encyclopedia/edit.html', {
-                'title': title,
-                'content': entry_obj.content,
-                'user': request.user
-            })
-        
-        entry_obj.content = content
-        entry_obj.save()
-        messages.success(request, f"Page '{title}' updated successfully!")
-        return redirect('entry', title=title)
-    
-    return render(request, 'encyclopedia/edit.html', {
+    return render(request, 'encyclopedia/history.html', {
         'title': title,
-        'content': entry_obj.content,
+        'entries': entries,
         'user': request.user
     })
-
-def random_page(request):
-    """Redirect to random entry (public access)"""
-    entries = Entry.objects.list_entries()  # All entries
-    
-    if not entries:
-        return render(request, 'encyclopedia/error.html', {
-            'message': "No entries available.",
-            'user': request.user
-        })
-    
-    title = random.choice(entries)
-    return redirect('entry', title=title)
