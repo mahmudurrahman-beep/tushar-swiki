@@ -1,0 +1,74 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    Error - Wiki
+{% endblock %}
+
+{% block body %}
+<div class="error-page text-center py-5">
+    <!-- Error Icon -->
+    <div class="error-icon mb-4">
+        <i class="fas fa-exclamation-triangle fa-5x text-warning"></i>
+    </div>
+    
+    <!-- Error Message -->
+    <h1 class="error-title mb-3">Oops! Something went wrong</h1>
+    
+    <div class="error-message mb-4">
+        <div class="alert alert-warning d-inline-block">
+            <i class="fas fa-info-circle me-2"></i>{{ message }}
+        </div>
+    </div>
+    
+    <!-- Suggested Actions -->
+    <div class="suggestions mb-5">
+        <h5 class="mb-3">What you can do:</h5>
+        <div class="row justify-content-center">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-home fa-2x text-primary mb-3"></i>
+                        <h5>Go Home</h5>
+                        <p class="small">Return to the main page</p>
+                        <a href="{% url 'index' %}" class="btn btn-outline-primary">
+                            Home Page
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-search fa-2x text-success mb-3"></i>
+                        <h5>Search</h5>
+                        <p class="small">Find another page</p>
+                        <a href="{% url 'search' %}" class="btn btn-outline-success">
+                            Search Encyclopedia
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <i class="fas fa-random fa-2x text-info mb-3"></i>
+                        <h5>Random</h5>
+                        <p class="small">Discover a random page</p>
+                        <a href="{% url 'random_page' %}" class="btn btn-outline-info">
+                            Random Page
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error Code -->
+    <div class="error-code mt-5">
+        <small class="text-muted">
+            <i class="fas fa-code me-1"></i>
+            Error details have been logged.
+        </small>
+    </div>
+</div>
+{% endblock %}

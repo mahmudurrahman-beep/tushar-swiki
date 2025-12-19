@@ -1,0 +1,1 @@
+generate new contents based on training data

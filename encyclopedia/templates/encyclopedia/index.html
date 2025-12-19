@@ -1,0 +1,71 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    উইকি(Wiki) - Home
+{% endblock %}
+
+{% block body %}
+<div class="page-header mb-4">
+    <h1 class="page-title">
+        <i class="fas fa-book-open me-2"></i>Public Encyclopedia
+    </h1>
+    {% if not user.is_authenticated %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Welcome Visitor!</strong> You can read all pages. 
+        <a href="{% url 'login' %}" class="alert-link">Login</a> or 
+        <a href="{% url 'register' %}" class="alert-link">Register</a> to create and edit pages.
+    </div>
+    {% endif %}
+</div>
+
+{% if entries %}
+<div class="entries-list">
+    <div class="row">
+        {% for entry in entries %}
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="card entry-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'entry' entry %}" class="entry-link">
+                            <i class="fas fa-file-alt me-2"></i>{{ entry }}
+                        </a>
+                    </h5>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">
+                        <a href="{% url 'entry' entry %}" class="btn btn-sm btn-outline-primary">
+                            Read Page
+                        </a>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'edit_page' entry %}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        {% else %}
+                        <span class="badge bg-light text-muted ms-2">
+                            <i class="fas fa-lock"></i> Login to edit
+                        </span>
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state text-center py-5">
+    <i class="fas fa-book fa-4x text-muted mb-3"></i>
+    <h3 class="text-muted">No pages yet</h3>
+    {% if user.is_authenticated %}
+    <p class="text-muted">Create the first page!</p>
+    <a href="{% url 'new_page' %}" class="btn btn-primary btn-lg mt-3">
+        <i class="fas fa-plus-circle me-2"></i>Create First Page
+    </a>
+    {% else %}
+    <p class="text-muted">Be the first to create a page!</p>
+    <a href="{% url 'register' %}" class="btn btn-primary mt-3">Register to Create</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,615 @@
+/* ===== BASE STYLES ===== */
+:root {
+    --sidebar-bg: #f8f9fa;
+    --sidebar-text: #212529;
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --border-radius: 0.375rem;
+    --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--dark-color);
+    background-color: #ffffff;
+}
+
+/* ===== SIDEBAR FIXES ===== */
+.container-fluid {
+    min-height: 100vh;
+    padding: 0;
+}
+
+.row.min-vh-100 {
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background-color: var(--sidebar-bg);
+    min-height: 100vh;
+    height: auto;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    border-right: 1px solid #dee2e6;
+    z-index: 1000;
+}
+
+.sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Logo Container */
+.logo-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+}
+
+.logo-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.logo-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.wiki-title {
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--dark-color);
+    transition: var(--transition);
+}
+
+.logo-container:hover .wiki-title {
+    color: var(--primary-color);
+}
+
+/* Search Form */
+.search-form {
+    margin-bottom: 1.5rem;
+}
+
+.search-input {
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    border-right: none;
+    border-color: #ced4da;
+}
+
+.search-input:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.search-form .btn {
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    border-color: #ced4da;
+    border-left: none;
+}
+
+/* Navigation Links */
+.nav-links {
+    flex: 1;
+}
+
+.nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.nav-link {
+    color: var(--sidebar-text);
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link:hover {
+    background-color: #e9ecef;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+/* User Section */
+.user-section {
+    background-color: #f1f3f4;
+    border-top: 1px solid #dee2e6;
+}
+
+.user-avatar {
+    color: var(--primary-color);
+}
+
+.user-info strong {
+    font-size: 1rem;
+}
+
+/* ===== MAIN CONTENT AREA ===== */
+.main-content {
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Messages/Alerts */
+.messages-container {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--box-shadow);
+}
+
+/* ===== ENTRY PAGE STYLING ===== */
+.entry-page {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Page Header */
+.page-header {
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.page-title {
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+}
+
+.entry-title {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-weight: 400;
+    color: #202122;
+    border-bottom: 1px solid #a2a9b1;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+}
+
+.entry-meta {
+    font-size: 0.875rem;
+}
+
+/* Entry Content */
+.entry-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #202122;
+}
+
+.markdown-content {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-weight: 400;
+    color: #202122;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eaecf0;
+    padding-bottom: 0.25em;
+}
+
+.markdown-content h1 {
+    font-size: 1.8em;
+    border-bottom: 1px solid #a2a9b1;
+}
+
+.markdown-content h2 {
+    font-size: 1.5em;
+}
+
+.markdown-content h3 {
+    font-size: 1.2em;
+}
+
+.markdown-content p {
+    margin: 1em 0;
+    line-height: 1.6;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin: 1em 0 1em 2em;
+    line-height: 1.6;
+}
+
+.markdown-content li {
+    margin-bottom: 0.5em;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid #a2a9b1;
+    padding-left: 1em;
+    margin: 1em 0;
+    color: #54595d;
+    font-style: italic;
+}
+
+.markdown-content code {
+    background-color: #f8f9fa;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+}
+
+.markdown-content pre {
+    background-color: #f8f9fa;
+    padding: 1em;
+    border-radius: 3px;
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+.markdown-content a {
+    color: #3366cc;
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline;
+}
+
+/* Entry Footer */
+.entry-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+}
+
+/* ===== INDEX PAGE STYLING ===== */
+.entries-list .entry-card {
+    border: 1px solid #e0e0e0;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.entries-list .entry-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+.entries-list .entry-link {
+    color: var(--dark-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.entries-list .entry-link:hover {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+/* Empty States */
+.empty-state {
+    color: #6c757d;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+/* ===== SEARCH PAGE STYLING ===== */
+.search-results-page .search-box {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #dee2e6;
+}
+
+.results-list .list-group-item {
+    border: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.results-list .list-group-item:hover {
+    background-color: #f8f9fa;
+    border-color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.no-results {
+    color: #6c757d;
+}
+
+/* ===== AUTH PAGES STYLING ===== */
+.auth-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.auth-card {
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.auth-title {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.auth-icon {
+    color: var(--primary-color);
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: #dee2e6;
+    z-index: 1;
+}
+
+.divider span {
+    position: relative;
+    z-index: 2;
+    background-color: white;
+    padding: 0 1rem;
+}
+
+/* ===== FORM STYLING ===== */
+.form-control {
+    border-radius: var(--border-radius);
+    border: 1px solid #ced4da;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control-lg {
+    font-size: 1.25rem;
+}
+
+/* ===== BUTTON STYLING ===== */
+.btn {
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.15);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(40, 167, 69, 0.15);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* ===== BADGES ===== */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+    border-radius: 2rem;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-buttons .btn-group {
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+    
+    .row.min-vh-100 {
+        flex-direction: column;
+    }
+    
+    .entry-title {
+        font-size: 1.8rem;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .content-wrapper {
+        padding: 1rem;
+    }
+    
+    .entry-page {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo-img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .wiki-title {
+        font-size: 1.5rem;
+    }
+    
+    .entry-title {
+        font-size: 1.5rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.entry-card,
+.auth-card,
+.search-box {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #b0b0b0;
+}
+/* Update the site title styling */
+.site-title {
+    font-family: 'Georgia', serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--dark-color);
+    transition: var(--transition);
+    font-size: 1.5rem;
+}
+
+.logo-container:hover .site-title {
+    color: var(--primary-color);
+}
+
+/* Update page title for entries */
+.entry-title {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-weight: 400;
+    color: #202122;
+    border-bottom: 2px solid #a2a9b1;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+}
+
+/* Add styling for public access badges */
+.badge.bg-light {
+    border: 1px solid #dee2e6;
+}

@@ -1,0 +1,98 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block body %}
+<div class="entry-page">
+    <!-- Page Header -->
+    <div class="page-header mb-4">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="entry-title">
+                    {{ title }}
+                </h1>
+                {% if entry_user %}
+                <div class="entry-meta mt-2">
+                    <span class="badge bg-light text-dark">
+                        <i class="fas fa-user-edit me-1"></i>By {{ entry_user.username }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                {% if user.is_authenticated and user == entry_user %}
+                <div class="btn-group" role="group">
+                    <a href="{% url 'edit_page' title %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                </div>
+                {% elif user.is_authenticated and not entry_user %}
+                <button class="btn btn-outline-secondary" disabled>
+                    <i class="fas fa-user-slash me-1"></i>Public Page
+                </button>
+                {% elif not user.is_authenticated %}
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-sign-in-alt me-1"></i>Login to Edit
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div class="entry-content mt-4">
+        <div class="markdown-content wiki-styled">
+            {{ content|safe }}
+        </div>
+        
+        {% if not content %}
+        <div class="empty-content text-center py-5">
+            <i class="fas fa-sticky-note fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">This page is empty</h4>
+            {% if user.is_authenticated %}
+            <a href="{% url 'edit_page' title %}" class="btn btn-primary mt-2">
+                <i class="fas fa-edit me-1"></i>Add Content
+            </a>
+            {% else %}
+            <p class="text-muted mt-2">Login to add content to this page.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Page Footer -->
+    <div class="entry-footer mt-5 pt-3 border-top">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            {% if entry_user %}
+                            Page created by {{ entry_user.username }}
+                            {% else %}
+                            Public encyclopedia page
+                            {% endif %}
+                        </small>
+                    </div>
+                    <div>
+                        {% if user.is_authenticated and user == entry_user %}
+                        <a href="{% url 'edit_page' title %}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit me-1"></i>Edit This Page
+                        </a>
+                        {% elif not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login to Contribute
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
