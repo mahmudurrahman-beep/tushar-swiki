@@ -3,4 +3,10 @@ builder = "nixpacks"
 buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput"
 
 [deploy]
-startCommand = "python manage.py migrate && gunicorn wiki.wsgi:application"
+startCommand = "python manage.py migrate && gunicorn wiki.wsgi:application --bind 0.0.0.0:$PORT"
+
+[[services]]
+port = 8000
+
+[environments.prod]
+DEBUG = "False"
