@@ -57,3 +57,11 @@ The Paris Peace Settlement of 1919 was a series of treaties negotiated after Wor
 
 ## Key Figures
 
+- **Woodrow Wilson** – Advocated Fourteen Points and League of Nations  
+- **Georges Clemenceau** – Sought to weaken Germany permanently  
+- **David Lloyd George** – Balanced punishment with stability  
+- **Vittorio Orlando** – Represented Italian interests  
+
+---
+
+*The Paris Peace Settlement reshaped Europe after World War I, but its punitive terms and inconsistent application of self‑determination sowed the seeds of future conflict, ultimately leading to World War II.*
