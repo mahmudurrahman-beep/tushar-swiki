@@ -11,3 +11,9 @@ Deutsch ist eine germanische Sprache, die von über 100 Millionen Menschen als M
 
 - Lateinisches Alphabet mit 26 Buchstaben  
 - Zusätzliche Umlaute (ä, ö, ü) und ß  
+
+## Kulturelle Bedeutung
+
+* Sprache von Goethe, Schiller, Kant und Nietzsche  
+* Wissenschaftliche und philosophische Tradition  
+* Amtssprache der EU und wichtige Weltsprache  
