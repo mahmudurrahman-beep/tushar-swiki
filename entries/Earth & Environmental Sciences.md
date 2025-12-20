@@ -1,0 +1,14 @@
+**Geology**
+  - Earth’s structure (crust, mantle, core)
+  - Plate tectonics (earthquakes, volcanoes)
+  - Rocks & minerals
+  - Geological time scale
+- **Ecology**
+  - Ecosystems & food chains
+  - Biomes (deserts, forests, oceans)
+  - Biodiversity & conservation
+- **Climate Science**
+  - Weather vs climate
+  - Climate change & global warming
+  - Renewable energy & sustainability
+  - Human impact on environment
