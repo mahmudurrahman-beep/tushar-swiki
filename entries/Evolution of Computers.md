@@ -1,7 +1,5 @@
 # Evolution of Computers
 
-# Evolution of Computers
-
 A concise history of computing from ancient tools to modern digital systems.
 
 ## Early Devices
