@@ -1,4 +1,4 @@
-# UPDATED encyclopedia/views.py
+# UPDATED encyclopedia/views.py with proper GitHub sync handling
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseForbidden
@@ -11,12 +11,11 @@ from .storage import get_entry_content, get_all_titles, save_entry_locally, sync
 import markdown2
 import random
 import re
+import os
 
 # ============ STARTUP SYNC ============
-# Run on first request if on Render
 def startup_sync():
     """Pull latest from GitHub on startup (only once)"""
-    import os
     if os.environ.get('RENDER') and not os.environ.get('SYNC_DONE'):
         print("Running startup sync...")
         git_pull_latest()
@@ -25,11 +24,71 @@ def startup_sync():
 # Call sync on module import
 startup_sync()
 
+# ============ AUTHENTICATION VIEWS ============
+
+def register_view(request):
+    """User registration"""
+    if request.user.is_authenticated:
+        return redirect('index')
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+        email = request.POST.get('email', '').strip()
+
+        if not username or not password:
+            messages.error(request, "Username and password are required")
+        elif len(username) < 3:
+            messages.error(request, "Username must be at least 3 characters")
+        elif len(password) < 6:
+            messages.error(request, "Password must be at least 6 characters")
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match")
+        elif User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+        else:
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                email=email if email else ''
+            )
+            login(request, user)
+            messages.success(request, f"Welcome, {username}! You can now create and edit pages.")
+            return redirect('index')
+
+    return render(request, 'encyclopedia/register.html', {'user': request.user})
+
+def login_view(request):
+    """User login"""
+    if request.user.is_authenticated:
+        return redirect('index')
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, f"Welcome back, {username}!")
+            return redirect('index')
+        else:
+            messages.error(request, "Invalid username or password")
+
+    return render(request, 'encyclopedia/login.html', {'user': request.user})
+
+def logout_view(request):
+    """User logout"""
+    if request.user.is_authenticated:
+        logout(request)
+        messages.info(request, "You have been logged out.")
+    return redirect('index')
+
 # ============ WIKI VIEWS (UPDATED) ============
 
 def index(request):
     """Home page showing UNIQUE entry titles"""
-    # Get from files, not database
     titles = get_all_titles()
     return render(request, 'encyclopedia/index.html', {
         'entries': titles,
@@ -102,9 +161,11 @@ def edit_page(request, title):
                 'user': request.user
             })
 
-        # Save to file and GitHub
+        # Save to file
         save_entry_locally(title, new_content)
-        sync_with_github(title, new_content, request.user.username)
+        
+        # Sync to GitHub - CHECK THE RETURN VALUE
+        github_synced = sync_with_github(title, new_content, request.user.username)
         
         # Also save to database for history
         Entry.objects.create(
@@ -113,7 +174,12 @@ def edit_page(request, title):
             user=request.user
         )
         
-        messages.success(request, f"Page '{title}' updated successfully!")
+        # Show appropriate message based on GitHub sync result
+        if github_synced:
+            messages.success(request, f"✅ Page '{title}' updated successfully and synced to GitHub!")
+        else:
+            messages.warning(request, f"⚠️ Page '{title}' saved locally but failed to sync with GitHub. Check Render logs.")
+        
         return redirect('entry', title=title)
     
     return render(request, 'encyclopedia/edit.html', {
@@ -145,9 +211,11 @@ def new_page(request):
             )
             return redirect('edit_page', title=title)
 
-        # Save to file and GitHub
+        # Save to file
         save_entry_locally(title, content)
-        sync_with_github(title, content, request.user.username)
+        
+        # Sync to GitHub - CHECK THE RETURN VALUE
+        github_synced = sync_with_github(title, content, request.user.username)
         
         # Save to database
         Entry.objects.create(
@@ -156,13 +224,15 @@ def new_page(request):
             content=content
         )
         
-        messages.success(request, f"New page '{title}' created successfully!")
+        # Show appropriate message based on GitHub sync result
+        if github_synced:
+            messages.success(request, f"✅ New page '{title}' created successfully and synced to GitHub!")
+        else:
+            messages.warning(request, f"⚠️ Page '{title}' created locally but failed to sync with GitHub. Check Render logs.")
+        
         return redirect('entry', title=title)
 
     return render(request, 'encyclopedia/new.html', {'user': request.user})
-
-# Authentication views remain the SAME
-# register_view, login_view, logout_view - NO CHANGES NEEDED
 
 def random_page(request):
     """Redirect to random UNIQUE entry"""
